@@ -9,7 +9,8 @@ class Route {
     protected string $routePattern;
     protected bool $isDynamic;
 
-    protected $action;
+    /** @var callable */
+    protected  $action;
     protected string $name = '';
 
     public function __construct(array|string $method, string $routePath, callable $action) {
@@ -17,8 +18,10 @@ class Route {
         $this->routePath = $routePath;
         if(!str_contains($routePath, '{')) {
             $this->routePattern = $routePath;
+            $this->isDynamic = false;
         } else {
             $this->isDynamic = true;
+            $paramCounter = 0;
             $this->routePattern = preg_replace_callback(
               '/{([^}]+)}/',
               function($matches) use (&$paramCounter) {

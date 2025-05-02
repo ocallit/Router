@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpGetterAndSetterCanBeReplacedWithPropertyHooksInspection */
 
 /** @noinspection PhpUnused */
 
@@ -22,7 +23,7 @@ class Router {
     public function getName(): string {return $this->name;}
 
     public function addRoute(string|array $method, string $routePath, callable $callable):Route {
-        return $this->routes[$this->hash($routePath)][] =
+        return $this->routes[$this->hash($this->staticPrefix($routePath))][] =
           new Route($method, $routePath, $callable);
     }
 
@@ -34,13 +35,6 @@ class Router {
         return null;
     }
 
-    public function cacheRoutes($cachePath):bool {
-        return file_put_contents($cachePath, serialize($this->routes)) !== false;
-    }
-
-    public function getRoutesCached($cachePath):void {
-        $this->routes = unserialize($cachePath);
-    }
 
     /**
      * Returns the callable associated with the route, with params set
